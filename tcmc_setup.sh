@@ -33,6 +33,9 @@ if [[ ! "$eingabe" = "j" ]]; then
     exit 1
 fi
 
+echo "Start setup  ..."
+echo ""
+
 echo "Create folder \"$1\"."
 mkdir $1
 cd $1
@@ -63,7 +66,7 @@ sbt mkrun
 cd ../TypeChef-BusyboxAnalysis
 
 echo "Downloading busybox ..."
-git clone https://git.busybox.net/busybox/ ./custom_busybox &> /dev/null
+git clone https://github.com/VariantSync/BusyBoxPreprocessed.git ./custom_busybox &> /dev/null
 echo -e "\e[32mDownload successful.\e[0m"
 
 echo "Downloading & extracting header files for Busybox ..."
@@ -72,12 +75,13 @@ wget http://www.cs.cmu.edu/~ckaestne/tmp/includes-redhat.tar.bz2 -P systems/redh
 tar -xjf systems/redhat/includes-redhat.tar.bz2 -C systems/redhat/
 echo -e "\e[32mDownload successful.\e[0m"
 
-#echo "Herunterladen: jar Datei zu KBuildMiner ..."
+# ALREADY INCLUDED IN TypeChef-BusyboxAnalysis
+#echo "Downloading jar Datei zu KBuildMiner ..."
 #wget https://github.com/AlexanderSchultheiss/KbuildMinerExtractor/raw/master/res/net/ssehub/kernel_haven/kbuildminer/res/kbuildminer.jar -P KBuildMiner/ &> /dev/null
-#echo -e "\e[32mErfolgreich fertig.\e[0m"
+#echo -e "\e[32mDownload successful.\e[0m"
 
-echo -e "\e[32mWhen this message is displayed to you, you have successfully run TCMC setup (1).\e[0m"
+echo -e "\e[32mWhen this message is displayed to you, you have successfully run TCMC setup.\e[0m"
 echo ""
-echo -e "Next step: $1/TypeChef-BusyboxAnalysis/tcmc_start.sh ..."
+echo -e "Next step for MCaO variants: tcmc_fix_variant.sh ..."
 
 exit 0

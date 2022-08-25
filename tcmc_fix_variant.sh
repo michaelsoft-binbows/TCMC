@@ -6,71 +6,75 @@
 set -e
 
 echo "== FIX VARIANT =="
-echo "1st argument: Specify the folder of the SPL repo (e.g., \"busybox\")"
-echo "2nd argument: File name for code_variability.spl.csv from \"Extraction\""
-echo "3rd argument: Specify the folder generated in ."
+echo "Save the busybox git repository in this folder as \"busybox\"."
+echo "1st argument: Specify relative path to code_variability.spl.csv (from \"Extraction\" output)"
+echo "2nd argument: Specify the project folder."
 echo ""
 
 # Parameters are incorrect
-if [ $# -ne 3 ]; then
+if [ $# -ne 2 ]; then
     echo -e "\e[31mWrong arguments.\e[0m"
     echo -e "The program has been terminated."
     exit 1
 fi
 
-if [[ ! -d $1 ]]; then
+if [[ ! -f $1 ]]; then
+    echo -e "\e[31mThe file does not exist: $1.\e[0m"
+    echo -e "The program has been terminated."
+    exit 1
+fi
+
+if [[ ! -d $2 ]]; then
     echo -e "\e[31mThe folder does not exist: $1.\e[0m"
     echo -e "The program has been terminated."
     exit 1
 fi
 
-if [[ ! -f $2 ]]; then
-    echo -e "\e[31mThe file does not exist: $2.\e[0m"
-    echo -e "The program has been terminated."
-    exit 1
-fi
-
-if [[ ! -d $3 ]]; then
-    echo -e "\e[31mThe folder does not exist: $2.\e[0m"
-    echo -e "The program has been terminated."
-    exit 1
-fi
-
-echo "Start comparison ..."
+echo "Start fix  ..."
 echo ""
 
-splRepo="$1"
-csv="$2"
-mcaoRepo="$3/TypeChef-BusyboxAnalysis/"
+splRepo="busybox"
+csv="$1"
+mcaoRepo="$2/TypeChef-BusyboxAnalysis/"
 
 FILES=$(find $splRepo -type f)
-FILES_CSV=$(cat $csv | cut -d";" -f1 | uniq)
+FILES_CSV=$(cat $csv | cut -d";" -f1 | uniq | tail -n +2)
 
-# 1: Copy files
+# debug
+#echo "$FILES" > FILES.tmp
+#echo "$FILES_CSV" > FILES_CSV.tmp
+
+COPY_FILES=$FILES
+
+# Filter files to be copied
 for f in $FILES_CSV; do
-    FILES_tmp=$(echo "$FILES" | grep -v "$f")
-    FILES=$FILES_tmp
+    COPY_FILES=$(echo "$COPY_FILES" | grep -v "^busybox/$f\$") # delete file, that is contained in csv, from list
 done
 
-echo "$FILES" > FILES.tmp
+# debug
+#echo "$COPY_FILES" > COPY_FILES.tmp # all files that are not in csv -> presence condition always true
 
+# copy files
 for f in $FILES; do
     f_dest="${mcaoRepo}custom_$f"
-    #echo $f_dest
     mkdir -p "${f_dest%/*}"
-    #echo "mach ${f_dest%/*}"
-    #echo "kopier $f in $f_dest"
     sudo cp $f $f_dest
 done
 
-# 2. Schritt
-
-for f in $FILES_CSV; do
-    f_dest="${mcaoRepo}custom_busybox/$f"
-    echo $f_dest >> touch_files
-    mkdir -p "${f_dest%/*}"
-    touch $f_dest
-    
-done
 
 echo -e "\e[32mWhen this message is displayed to you, you have successfully run this program.\e[0m"
+exit 0
+
+#debug
+#echo "" > touched_files.tmp
+
+# necessary?
+# touch all files whose presence condition is false but the KBuildMiner requires their presence
+for f in $FILES_CSV; do
+    f_dest="${mcaoRepo}custom_busybox/$f"
+    mkdir -p "${f_dest%/*}"
+    if [[ ! -f $f_dest ]]; then
+        echo $f_dest >> touched_files.tmp
+        touch $f_dest
+    fi
+done
