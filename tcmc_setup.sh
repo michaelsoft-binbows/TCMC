@@ -26,9 +26,9 @@ echo " - Java (JVM) 8"
 echo " - Java (JVM) 17"
 echo " - Scala 2.11.12"
 echo " - sbt script version 1.17.1"
-read -p "Are those programs installed? [j/N] " eingabe
+read -p "Are those programs installed? [j/N] " programs
 
-if [[ ! "$eingabe" = "j" ]]; then
+if [[ ! "$programs" = "j" ]]; then
     echo -e "TCMC has been exited due to missing programs."
     exit 1
 fi
@@ -66,7 +66,18 @@ sbt mkrun
 cd ../TypeChef-BusyboxAnalysis
 
 echo "Downloading busybox ..."
-git clone https://github.com/VariantSync/BusyBoxPreprocessed.git ./custom_busybox &> /dev/null
+read -p "Are those programs installed? [1 = original, 2 = preprocessed] " busybox_repo
+if [[ "$busybox_repo" = "1" ]]; then
+    # Original Busybox git repository
+    git clone https://git.busybox.net/busybox/ ./custom_busybox &> /dev/null
+elif [[ "$busybox_repo" = "2" ]]; then
+    # Preprocessed Busybox git repository
+    git clone https://github.com/VariantSync/BusyBoxPreprocessed.git ./custom_busybox &> /dev/null
+else
+    echo -e "\e[31mFaulty input: $busybox_repo.\e[0m"
+    echo -e "The program has been terminated."
+    exit 1
+fi
 echo -e "\e[32mDownload successful.\e[0m"
 
 echo "Downloading & extracting header files for Busybox ..."
