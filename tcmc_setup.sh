@@ -66,7 +66,7 @@ sbt mkrun
 cd ../TypeChef-BusyboxAnalysis
 
 echo "Downloading busybox ..."
-read -p "Are those programs installed? [1 = original, 2 = preprocessed] " busybox_repo
+read -p "Select Busybox git repository [1 = original, 2 = preprocessed]: " busybox_repo
 if [[ "$busybox_repo" = "1" ]]; then
     # Original Busybox git repository
     git clone https://git.busybox.net/busybox/ ./custom_busybox &> /dev/null
