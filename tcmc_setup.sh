@@ -65,20 +65,20 @@ sbt mkrun
 
 cd ../TypeChef-BusyboxAnalysis
 
-echo "Downloading busybox ..."
-read -p "Select Busybox git repository [1 = original, 2 = preprocessed]: " busybox_repo
+read -p "Select Busybox git repository [1 = original, 2 = preprocessed, other = no download]: " busybox_repo
 if [[ "$busybox_repo" = "1" ]]; then
     # Original Busybox git repository
+    echo "Downloading busybox ..."
     git clone https://git.busybox.net/busybox/ ./custom_busybox &> /dev/null
+    echo -e "\e[32mDownload successful.\e[0m"
 elif [[ "$busybox_repo" = "2" ]]; then
     # Preprocessed Busybox git repository
+    echo "Downloading busybox ..."
     git clone https://github.com/VariantSync/BusyBoxPreprocessed.git ./custom_busybox &> /dev/null
-else
-    echo -e "\e[31mFaulty input: $busybox_repo.\e[0m"
-    echo -e "The program has been terminated."
-    exit 1
-fi
 echo -e "\e[32mDownload successful.\e[0m"
+else
+    echo -e "\e[33mSkipping Busybox git repository download. (to be inserted to \"TypeChef-BusyboxAnalysis/custom_busybox\" manually)\e[0m"
+fi
 
 echo "Downloading & extracting header files for Busybox ..."
 mkdir systems && mkdir systems/redhat
