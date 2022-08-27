@@ -52,7 +52,7 @@ for f in $FILES_CSV; do
 done
 
 # debug
-echo "$COPY_FILES" > COPY_FILES.tmp # all files that are not in csv -> presence condition always true
+#echo "$COPY_FILES" > COPY_FILES.tmp # all files that are not in csv -> presence condition always true
 
 # copy files
 for f in $COPY_FILES; do
